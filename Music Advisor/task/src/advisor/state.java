@@ -2,8 +2,7 @@ package advisor;
 
 import java.util.Scanner;
 
-//under production
-// Not used yet.
+
 
 public class state {
     private static final Scanner scanner = new Scanner(System.in);
