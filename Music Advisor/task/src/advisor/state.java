@@ -10,6 +10,7 @@ public class state {
     private  static boolean isRunning = true;
     // to inform other functions that the authorization process is a success or not.
     public static boolean switch_control = false;
+    private static String forPlaylists;
             enum State {
         OPERATION_INPUT,NEW,FEATURED,CATEGORIES,PLAYLISTS,AUTH
             }
@@ -25,6 +26,15 @@ public class state {
                 switch(currentS) {
                     case OPERATION_INPUT:
                         String input = scanner.nextLine();
+                        // precaution for playlists
+                        String[] text = input.split(" ");
+                        if (text.length == 2 && text[0].equals("playlists")) {
+                            forPlaylists = text[1];
+                            input = "playlists Mood";
+                        }else if (text.length >= 3 && text[0].equals("playlists")) {
+                            forPlaylists = text[1] +" "+ text[2];
+                            input = "playlists Mood";
+                        }
                         switch (input) {
                             case "new":
                                 currentState = State.NEW;
@@ -60,7 +70,7 @@ public class state {
                         break;
                     case PLAYLISTS:
                         currentState = State.OPERATION_INPUT;
-                        Main.playlists();
+                        Main.playlists(forPlaylists);
                         break;
                     case AUTH:
                         currentState = State.OPERATION_INPUT;
