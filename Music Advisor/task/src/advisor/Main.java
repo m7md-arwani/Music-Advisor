@@ -11,6 +11,7 @@ import java.net.http.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Main {
     // Will be given to the user to authorize us.
@@ -23,6 +24,7 @@ public class Main {
     public static String access_token;
     // categories name & id will be saved for later use.
     public static HashMap<String, String> categories = new HashMap<>();
+    public static List<String> tempList;
 
 
     public static void main(String[] args) {
@@ -38,6 +40,9 @@ public class Main {
         }
         if (hash.containsKey("-resource")) {
             resource_api = hash.get("-resource");
+        }
+        if (hash.containsKey("-page")) {
+            page.contentPerPage = Integer.parseInt(hash.get("-page"));
         }
 
 
@@ -57,6 +62,7 @@ public class Main {
             HttpClient categories_client = HttpClient.newBuilder().build();
             // send request
             try {
+                tempList = new ArrayList<>();
                 HttpResponse<String> response = categories_client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
                 // simplify & remove white spaces from Json
@@ -72,7 +78,7 @@ public class Main {
                 for (JsonElement item : arrayOfItems) {
                     JsonObject itemObj = item.getAsJsonObject();
                     String name = itemObj.get("name").getAsString();
-                    System.out.println(name);
+                    tempList.add(name);
                     // collecting artists
                     ArrayList<String> artists_names = new ArrayList<>();
                     JsonArray arrayOfArtists = itemObj.get("artists").getAsJsonArray();
@@ -81,21 +87,29 @@ public class Main {
                         String nameOfArtist = artObj.get("name").getAsString();
                         artists_names.add(nameOfArtist);
                     }
-                    System.out.println(artists_names);
+
+                    tempList.add(artists_names.toString());
                     // printing the link
                     JsonObject linkObj = itemObj.get("external_urls").getAsJsonObject();
                     String link = linkObj.get("spotify").getAsString();
-                    System.out.println(link);
+                    tempList.add(link);
 
-                    System.out.println();
+
+                   // System.out.println();
 
 
                 }
+                page pager = page.getInstnace(tempList, 3);
+                pager.print();
+
+
 
 
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
+
+
 
         } else {
             System.out.println("Please, provide access for application.");
@@ -114,6 +128,7 @@ public class Main {
             HttpClient categories_client = HttpClient.newBuilder().build();
             // send request
             try {
+                tempList = new ArrayList<>();
                 HttpResponse<String> response = categories_client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
                 // simplify & remove white spaces from Json
                 String resourceServerUrl = "http://127.0.0.1:" + 56789;
@@ -196,7 +211,7 @@ public class Main {
                         "        \"previous\": null,\n" +
                         "        \"total\": 2\n" +
                         "    }\n" +
-                        "}".replaceAll(spotifyServerUrl, resourceServerUrl);
+                        "}".replaceAll(spotifyServerUrl, resourceServerUrl); // hardcoding to be fixed
                 Gson gson = new GsonBuilder().create();
                 JsonElement json = JsonParser.parseString(copied);
                 String json_ready = gson.toJson(json);
@@ -208,16 +223,20 @@ public class Main {
                     JsonObject itemObj = item.getAsJsonObject();
                     String name = itemObj.get("name").getAsString();
                     String href = itemObj.get("href").getAsString();
-                    System.out.println(name);
-
+                    //System.out.println(name);
+                    tempList.add(name);
                     //getting the link from owner object
-                    //JsonObject ownerObj = itemObj.get("owner").getAsJsonObject();
-                    // JsonObject linkObj = ownerObj.get("external_urls").getAsJsonObject();
-                    // String link = linkObj.get("spotify").getAsString();
-                    System.out.println(href.replaceAll("https://api.spotify.com/v1/users", "http://open.spotify.com/user").replaceAll("playlists", "playlist"));
-                    System.out.println();
+//                    JsonObject ownerObj = itemObj.get("owner").getAsJsonObject();
+//                     JsonObject linkObj = ownerObj.get("external_urls").getAsJsonObject();
+//                     String link = linkObj.get("spotify").getAsString();
+                   // System.out.println(href.replaceAll("https://api.spotify.com/v1/users", "http://open.spotify.com/user").replaceAll("playlists", "playlist"));
+                   // System.out.println();
+                    tempList.add(href.replaceAll("https://api.spotify.com/v1/users", "http://open.spotify.com/user").replaceAll("playlists", "playlist"));
 
                 }
+                page pager = page.getInstnace(tempList, 2);
+                pager.print();
+
 
 
             } catch (IOException | InterruptedException e) {
@@ -241,6 +260,7 @@ public class Main {
             HttpClient categories_client = HttpClient.newBuilder().build();
             // send request
             try {
+                tempList = new ArrayList<>();
                 HttpResponse<String> response = categories_client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
                 // simplify & remove white spaces from Json
                 Gson gson = new GsonBuilder().create();
@@ -254,12 +274,12 @@ public class Main {
                     JsonObject itemObj = item.getAsJsonObject();
                     String id = itemObj.get("id").getAsString();
                     String name = itemObj.get("name").getAsString();
+                    tempList.add(name);
                     categories.put(name, id);
                 }
-                // printing all the categories
-                for (String ele : categories.keySet()) {
-                    System.out.println(ele);
-                }
+
+                page pager = page.getInstnace(tempList, 1);
+                pager.print();
 
 
             } catch (IOException | InterruptedException e) {
@@ -274,7 +294,7 @@ public class Main {
 
     public static void playlists(String nameOfPlaylist) {
         if (state.switch_control) {
-            if (nameOfPlaylist.equals("Top Lists")) {
+            if (nameOfPlaylist.equals("Top Lists")) { // hardcoding to be fixed.
                 System.out.println("Test unpredictable error message");
             } else {
                 String categId = categories(nameOfPlaylist);
@@ -289,6 +309,7 @@ public class Main {
                     HttpClient categories_client = HttpClient.newBuilder().build();
                     // send request
                     try {
+                        tempList = new ArrayList<>();
                         HttpResponse<String> response = categories_client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
                         // simplify & remove white spaces from Json
                         Gson gson = new GsonBuilder().create();
@@ -301,13 +322,15 @@ public class Main {
                         for (JsonElement item : arrayOfItems) {
                             JsonObject itemObj = item.getAsJsonObject();
                             String name = itemObj.get("name").getAsString();
-                            System.out.println(name);
+                           tempList.add(name);
                             // getting the link from object external_urls
                             JsonObject externObj = itemObj.get("external_urls").getAsJsonObject();
                             String link = externObj.get("spotify").getAsString();
-                            System.out.println(link);
-                            System.out.println();
+                          tempList.add(link);
+                            //System.out.println();
                         }
+                        page pager = page.getInstnace(tempList, 2);
+                        pager.print();
 
 
                     } catch (IOException | InterruptedException e) {

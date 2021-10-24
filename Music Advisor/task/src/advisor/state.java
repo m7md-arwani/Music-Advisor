@@ -26,6 +26,14 @@ public class state {
                 switch(currentS) {
                     case OPERATION_INPUT:
                         String input = scanner.nextLine();
+                        // page changing precautions
+                        if (input.equals("next")) {
+                            page.nextOrPrevious(true);
+                            input = "pageChange";
+                        } else if(input.equals("prev")) {
+                            page.nextOrPrevious(false);
+                            input = "pageChange";
+                        }
                         // precaution for playlists
                         String[] text = input.split(" ");
                         if (text.length == 2 && text[0].equals("playlists")) {
@@ -38,22 +46,42 @@ public class state {
                         switch (input) {
                             case "new":
                                 currentState = State.NEW;
+                                // refresh page indexes
+                                page.currentPage = 1;
+                                page.currentIndex = 0;
+                                Main.tempList = null;
                                 break;
                             case "featured":
                                 currentState  = State.FEATURED;
+                                // refresh page indexes
+                                page.currentPage = 1;
+                                page.currentIndex = 0;
+                                Main.tempList = null;
                                 break;
                             case "categories":
                                 currentState   = State.CATEGORIES;
+                                // refresh page indexes
+                                page.currentPage = 1;
+                                page.currentIndex = 0;
+                                Main.tempList = null;
                                 break;
                             case "playlists Mood":
                                 currentState = State.PLAYLISTS;
+                                // refresh page indexes
+                                page.currentPage = 1;
+                                page.currentIndex = 0;
+                                Main.tempList = null;
                                 break;
                             case "auth":
                                 currentState= State.AUTH;
+
                                 break;
                             case "exit":
                                 System.out.println("---GOODBYE!---");
                                 isRunning = false;
+                                break;
+                            case "pageChange":
+                                break;
                         }
                         break;
                     case NEW:
