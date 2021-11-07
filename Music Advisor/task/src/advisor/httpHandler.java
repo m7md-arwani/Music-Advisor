@@ -25,7 +25,7 @@ public class httpHandler implements HttpHandler {
 
     private String createResponseFromQueryParams(URI uri) {
 
-        String query = uri.toString(); // change toString() to getQuery() in case of errors
+        String query = uri.getQuery(); // change toString() to getQuery() in case of errors
         if (query.contains("code")) {
             String[] text = query.split(EQUAL_DELIMITER);
             code = text[1];

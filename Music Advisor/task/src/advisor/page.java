@@ -1,7 +1,7 @@
 package advisor;
 
 import java.util.List;
-
+// The class is implementing SingleTon design pattern.
 public class page {
     private page() {
     }
@@ -50,7 +50,7 @@ public class page {
                 System.out.println("---PAGE " + ++currentPage + " OF " + totalPages + "---");
 
             }
-
+        // The case if the user wants the previous page.
         } else {
             if (currentPage - 1 <= 0) {
                 System.out.println("No more pages");
